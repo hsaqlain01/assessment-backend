@@ -1,4 +1,5 @@
 import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
+import { User } from '../entities/users.entity';
 
 export class LoginDto {
   @IsNotEmpty()
@@ -13,4 +14,10 @@ export class UserDto extends LoginDto {
   @IsNotEmpty()
   @IsEmail()
   email: string;
+}
+
+export interface LoginResponse {
+  user: User;
+
+  access_token: string;
 }

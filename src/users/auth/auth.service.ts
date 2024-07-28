@@ -30,8 +30,8 @@ export class AuthService {
       throw new BadRequestException(responseMessage.INVALID_USER_CREDENTIALS);
     }
 
-    const { password, ...result } = user;
-    return result;
+    const { password, ...userDetails } = user;
+    return userDetails;
   }
 
   async getToken(user: User) {
@@ -39,6 +39,7 @@ export class AuthService {
       const payload = {
         email: user.email,
         username: user.username,
+        createdAt: user.createdAt,
         id: user.id,
       };
 

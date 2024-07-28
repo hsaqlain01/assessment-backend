@@ -8,6 +8,7 @@ import { CommonDtos } from '../common/dto';
 import { CreateTodoDto, UpdateTodoDto } from './dto/todos.dto';
 import { handleData, paginatedResponse } from '../helpers/handleResponse';
 import { responseCode } from '../helpers/responseCode';
+import { responseMessage } from '../helpers/responseMessage';
 
 @Injectable()
 export class TodoService extends BaseService {
@@ -50,7 +51,7 @@ export class TodoService extends BaseService {
     const todo = await this.todosRepository.geTodoById(id).getOne();
 
     if (!todo) {
-      throw new BadRequestException('Todo not found');
+      throw new BadRequestException(responseMessage.NOT_FOUND);
     }
 
     // Update todo properties
@@ -66,7 +67,7 @@ export class TodoService extends BaseService {
   async deleteTodo(id: number) {
     const todo = await this.todosRepository.geTodoById(id).getOne();
     if (!todo) {
-      throw new BadRequestException('Todo not found');
+      throw new BadRequestException(responseMessage.NOT_FOUND);
     }
 
     const transactionScope = this.getTransactionScope();

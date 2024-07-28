@@ -13,15 +13,13 @@ export interface ApiResponse<T> {
 export const handleData = <T>(
   data: T,
   status: number = responseCode.OK,
-  message: string = responseMessage.SUCCESS,
-  token?: string
+  message: string = responseMessage.SUCCESS
 ): ApiResponse<T> => {
   return {
     status,
     result: true,
     message,
     data,
-    token,
   };
 };
 
