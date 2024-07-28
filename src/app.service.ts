@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AppService {
-  welcomeRoute(): string {
+  welcome(): string {
     return 'App is successfully running!';
   }
 }

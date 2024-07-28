@@ -23,7 +23,7 @@ class EntityBase {
     const propertiesToIgnore = ['createdAt', 'updatedAt'];
     const updatedProperties = {};
     const keys = Object.keys(this).filter(
-      (key) => !propertiesToIgnore.includes(key),
+      (key) => !propertiesToIgnore.includes(key)
     );
 
     for (const key of keys) {

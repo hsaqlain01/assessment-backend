@@ -10,7 +10,7 @@ export class AuthService {
   constructor(
     private jwtService: JwtService,
     private userRepository: UserRepository,
-    private bcryptService: BcryptService,
+    private bcryptService: BcryptService
   ) {}
 
   async validateUser(username: string, pass: string): Promise<any> {
@@ -23,7 +23,7 @@ export class AuthService {
 
     const doesPasswordCompanre = await this.bcryptService.compareHashPassword(
       pass,
-      user.password,
+      user.password
     );
 
     if (!doesPasswordCompanre) {

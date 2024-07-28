@@ -157,13 +157,13 @@ export class TransactionScope {
     try {
       const afterCommitsHooks = this.filterHooks(HookType.AFTER_COMMIT);
       const promises = afterCommitsHooks.map((hook) =>
-        hook.listener(hook.data),
+        hook.listener(hook.data)
       );
       await Promise.allSettled(promises);
     } catch (error) {
       console.error(
         'error while executing transaction scope AfterCommit Hooks',
-        error,
+        error
       );
       throw error;
     } finally {
@@ -172,7 +172,7 @@ export class TransactionScope {
   }
 
   private extractCollectionsFromTransactions(
-    transaction_objects: TransactionScopeObject[],
+    transaction_objects: TransactionScopeObject[]
   ) {
     const entity_collection = [];
     const raw_query_collection = [];
@@ -196,7 +196,7 @@ export class TransactionScope {
   public async commit(
     saveOptions?: SaveOptions,
     removeOptions?: RemoveOptions,
-    performEntityBulkUpsert = false,
+    performEntityBulkUpsert = false
   ): Promise<void> {
     try {
       await dataSource.manager.transaction(async (transactionEntityManager) => {
@@ -209,7 +209,7 @@ export class TransactionScope {
             for (const rawquery of raw_query_collection) {
               await transactionEntityManager.query(
                 rawquery.query,
-                rawquery.parameters,
+                rawquery.parameters
               );
             }
           }
@@ -219,7 +219,7 @@ export class TransactionScope {
               const rawquery = transaction.object as IRawQuery;
               await transactionEntityManager.query(
                 rawquery.query,
-                rawquery.parameters,
+                rawquery.parameters
               );
             } else if (
               transaction.type ===
@@ -233,7 +233,7 @@ export class TransactionScope {
                   entity = transaction.object as EntityBase | EntityBase[];
                   await transactionEntityManager.softRemove(
                     entity,
-                    saveOptions,
+                    saveOptions
                   );
                   break;
                 case objectState.HARD_DELETE:
@@ -250,7 +250,7 @@ export class TransactionScope {
                       await transactionEntityManager.update(
                         entityClass,
                         { id: entity.id },
-                        propertiesToUpdate,
+                        propertiesToUpdate
                       );
                     } else if (transaction.options) {
                       const criteria = transaction.options.where
@@ -261,7 +261,7 @@ export class TransactionScope {
                       await transactionEntityManager.update(
                         entityClass,
                         criteria,
-                        transaction.options.values,
+                        transaction.options.values
                       );
                     } else {
                       await transactionEntityManager.save(entity, saveOptions);
@@ -276,20 +276,20 @@ export class TransactionScope {
                           await transactionEntityManager.update(
                             entityClass,
                             { id: en.id },
-                            propertiesToUpdate,
+                            propertiesToUpdate
                           );
                         }
                       } else {
                         await transactionEntityManager.save(
                           entity,
-                          saveOptions,
+                          saveOptions
                         );
                       }
                     }
                   } else {
                     console.error(
                       'ENTITY NOT AN INSTANCE OF ENTITY BASE',
-                      entity,
+                      entity
                     );
                     throw new Error('Entity is not an instance of entity base');
                   }
@@ -302,7 +302,7 @@ export class TransactionScope {
                     const insertResult = (
                       await transactionEntityManager.insert(
                         entityClass,
-                        transaction.options.values,
+                        transaction.options.values
                       )
                     ).generatedMaps[0];
                     // deep merge insert result in transaction.object
@@ -318,7 +318,7 @@ export class TransactionScope {
                     entity['__proto__']['constructor']['name'];
                   await transactionEntityManager.insert(
                     entityClass,
-                    transaction.object as EntityBase[],
+                    transaction.object as EntityBase[]
                   );
                   break;
               }

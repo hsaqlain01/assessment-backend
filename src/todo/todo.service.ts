@@ -1,12 +1,13 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
-import { CreateTodoDto, UpdateTodoDto } from "./dto/todos.dto";
-import { User } from "../users/entities/users.entity";
-import { BaseService } from "../base/base.service";
-import { TransactionScope } from "../base/transactionScope";
-import { handleData, paginatedResponse } from "../helpers/handleResponse";
-import { Todo } from "./entities/todo.entity";
-import { TodosRepository } from "./todo.repository";
-import { CommonDtos } from "../common/dto";
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { BaseService } from '../base/base.service';
+import { TransactionScope } from '../base/transactionScope';
+import { User } from '../users/entities/users.entity';
+import { Todo } from './entities/todo.entity';
+import { TodosRepository } from './todo.repository';
+import { CommonDtos } from '../common/dto';
+import { CreateTodoDto, UpdateTodoDto } from './dto/todos.dto';
+import { handleData, paginatedResponse } from '../helpers/handleResponse';
+import { responseCode } from '../helpers/responseCode';
 
 @Injectable()
 export class TodoService extends BaseService {
@@ -14,6 +15,7 @@ export class TodoService extends BaseService {
     super();
   }
 
+  // Commit transaction if needed
   async commitTransaction(ts: TransactionScope) {
     await ts.commit();
   }
@@ -26,10 +28,9 @@ export class TodoService extends BaseService {
     const transactionScope = this.getTransactionScope();
     transactionScope.add(todoRecord);
 
-    // Commit transaction if needed, ensure your getTransactionScope() handles transactions properly
     await this.commitTransaction(transactionScope);
 
-    return handleData(todoRecord);
+    return handleData(todoRecord, responseCode.CREATED);
   }
 
   async getTodoListing(query: CommonDtos.PaginationInput) {
@@ -39,7 +40,7 @@ export class TodoService extends BaseService {
     );
 
     const response = {
-      ...paginatedResponse(totalRecords, query, data),
+      pagination: paginatedResponse(totalRecords, query, data),
       data,
     };
     return handleData(response);
@@ -47,13 +48,12 @@ export class TodoService extends BaseService {
 
   async updateTodo(id: number, updateTodoDto: UpdateTodoDto) {
     const todo = await this.todosRepository.geTodoById(id).getOne();
-    console.log("xx- todo", todo);
 
     if (!todo) {
-      throw new BadRequestException("Todo not found");
+      throw new BadRequestException('Todo not found');
     }
 
-    // Update category properties
+    // Update todo properties
     Object.assign(todo, updateTodoDto);
 
     const transactionScope = this.getTransactionScope();
@@ -66,7 +66,7 @@ export class TodoService extends BaseService {
   async deleteTodo(id: number) {
     const todo = await this.todosRepository.geTodoById(id).getOne();
     if (!todo) {
-      throw new BadRequestException("Todo not found");
+      throw new BadRequestException('Todo not found');
     }
 
     const transactionScope = this.getTransactionScope();

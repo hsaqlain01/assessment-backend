@@ -7,13 +7,14 @@ import { TransactionScope } from '../base/transactionScope';
 import { ApiResponse, handleData } from 'src/helpers/handleResponse';
 import { BcryptService } from 'src/services/bcrypt';
 import { AuthService } from './auth/auth.service';
+import { responseCode } from 'src/helpers/responseCode';
 
 @Injectable()
 export class UsersService extends BaseService {
   constructor(
     private usersRepository: UserRepository,
     private bcryptService: BcryptService,
-    private authService: AuthService,
+    private authService: AuthService
   ) {
     super();
   }
@@ -30,7 +31,7 @@ export class UsersService extends BaseService {
     }
 
     const hashedPassword = await this.bcryptService.hashPassword(
-      createUserDto.password,
+      createUserDto.password
     );
 
     const payloadForCreate = {
@@ -44,14 +45,17 @@ export class UsersService extends BaseService {
     await this.commitTransaction(transactionScope);
 
     const { password, ...userRecord } = user;
-    return handleData(userRecord);
+    return handleData(userRecord, responseCode.CREATED);
   }
 
   async login(user: User): Promise<ApiResponse<User>> {
-    console.log('xx- user', user);
-
     const { access_token } = await this.authService.getToken(user);
 
-    return handleData(user, 200, 'Login Successfully', access_token);
+    return handleData(
+      user,
+      responseCode.OK,
+      'Login Successfully',
+      access_token
+    );
   }
 }

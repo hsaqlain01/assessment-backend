@@ -9,7 +9,7 @@ export class TodosRepository extends Repository<Todo> {
   }
   public getTodoListing(
     page: number = 1,
-    limit: number = 10,
+    limit: number = 10
   ): Promise<[Todo[], number]> {
     const skip = (page - 1) * limit;
     let query = this.createQueryBuilder('todos')

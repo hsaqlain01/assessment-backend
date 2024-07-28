@@ -14,7 +14,7 @@ export const handleData = <T>(
   data: T,
   status: number = responseCode.OK,
   message: string = responseMessage.SUCCESS,
-  token?: string,
+  token?: string
 ): ApiResponse<T> => {
   return {
     status,
@@ -25,10 +25,10 @@ export const handleData = <T>(
   };
 };
 
-export const paginatedResponse = (
+export const paginatedResponse = <T>(
   totalRecords: number,
   query: CommonDtos.PaginationInput,
-  data: any,
+  data: T[]
 ) => {
   return {
     totalRecords,
