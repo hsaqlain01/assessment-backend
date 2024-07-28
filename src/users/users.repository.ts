@@ -14,8 +14,14 @@ export class UserRepository extends Repository<User> {
     });
   }
 
-  public getUserByEmail(email: string) {
-    return this.getUserByField('email', email);
+  public getUserByEmailOrUsername(email: string, username: string) {
+    return this.createQueryBuilder('users')
+      .where(`users.email = :email`, {
+        email,
+      })
+      .orWhere(`users.username = :username`, {
+        username,
+      });
   }
 
   public getUserDetailsById(id: number) {

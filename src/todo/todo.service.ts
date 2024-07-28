@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { BaseService } from '../base/base.service';
 import { TransactionScope } from '../base/transactionScope';
 import { User } from '../users/entities/users.entity';
@@ -7,7 +7,6 @@ import { TodosRepository } from './todo.repository';
 import { CommonDtos } from '../common/dto';
 import { CreateTodoDto, UpdateTodoDto } from './dto/todos.dto';
 import { handleData, paginatedResponse } from '../helpers/handleResponse';
-import { responseCode } from '../helpers/responseCode';
 import { responseMessage } from '../helpers/responseMessage';
 
 @Injectable()
@@ -31,7 +30,7 @@ export class TodoService extends BaseService {
 
     await this.commitTransaction(transactionScope);
 
-    return handleData(todoRecord, responseCode.CREATED);
+    return handleData(todoRecord, responseMessage.SUCCESS, HttpStatus.CREATED);
   }
 
   async getTodoListing(query: CommonDtos.PaginationInput) {
@@ -44,7 +43,7 @@ export class TodoService extends BaseService {
       pagination: paginatedResponse(totalRecords, query, data),
       data,
     };
-    return handleData(response);
+    return handleData(response, responseMessage.SUCCESSFULLY_DONE);
   }
 
   async updateTodo(id: number, updateTodoDto: UpdateTodoDto) {
@@ -61,7 +60,7 @@ export class TodoService extends BaseService {
     transactionScope.update(todo);
 
     await this.commitTransaction(transactionScope);
-    return handleData(todo);
+    return handleData(todo, responseMessage.UPDATED);
   }
 
   async deleteTodo(id: number) {
@@ -74,6 +73,6 @@ export class TodoService extends BaseService {
 
     transactionScope.hardDelete(todo);
     await this.commitTransaction(transactionScope);
-    return handleData(todo);
+    return handleData(todo, responseMessage.DELETED);
   }
 }

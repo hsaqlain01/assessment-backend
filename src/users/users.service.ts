@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { LoginResponse, UserDto } from './dto/user.dto';
 import { UserRepository } from './users.repository';
 import { BaseService } from '../base/base.service';
@@ -7,7 +7,6 @@ import { TransactionScope } from '../base/transactionScope';
 import { BcryptService } from '../services/bcrypt';
 import { AuthService } from './auth/auth.service';
 import { ApiResponse, handleData } from '../helpers/handleResponse';
-import { responseCode } from '../helpers/responseCode';
 import { responseMessage } from '../helpers/responseMessage';
 
 @Injectable()
@@ -24,11 +23,13 @@ export class UsersService extends BaseService {
   }
   async create(createUserDto: UserDto): Promise<ApiResponse<User>> {
     const existingUser = await this.usersRepository
-      .getUserByEmail(createUserDto.email)
+      .getUserByEmailOrUsername(createUserDto.email, createUserDto.username)
       .getOne();
 
     if (existingUser) {
-      throw new BadRequestException(`Email ${responseMessage.ALREADY_EXIST}`);
+      throw new BadRequestException(
+        `Email or username ${responseMessage.ALREADY_EXIST}`
+      );
     }
 
     const hashedPassword = await this.bcryptService.hashPassword(
@@ -46,13 +47,13 @@ export class UsersService extends BaseService {
     await this.commitTransaction(transactionScope);
 
     const { password, ...userRecord } = user;
-    return handleData(userRecord, responseCode.CREATED);
+    return handleData(userRecord, responseMessage.SUCCESS, HttpStatus.CREATED);
   }
 
   async login(user: User): Promise<ApiResponse<LoginResponse>> {
     const { access_token } = await this.authService.getToken(user);
 
     const response = { user, access_token };
-    return handleData(response, responseCode.OK, responseMessage.SIGNED_IN);
+    return handleData(response, responseMessage.SIGNED_IN);
   }
 }

@@ -1,6 +1,6 @@
 import { CommonDtos } from 'src/common/dto';
-import { responseCode } from './responseCode';
 import { responseMessage } from './responseMessage';
+import { HttpCode, HttpStatus } from '@nestjs/common';
 
 export interface ApiResponse<T> {
   status: number;
@@ -12,8 +12,8 @@ export interface ApiResponse<T> {
 
 export const handleData = <T>(
   data: T,
-  status: number = responseCode.OK,
-  message: string = responseMessage.SUCCESS
+  message: string = responseMessage.SUCCESS,
+  status: number = HttpStatus.OK
 ): ApiResponse<T> => {
   return {
     status,
