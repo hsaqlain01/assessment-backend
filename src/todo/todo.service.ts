@@ -33,10 +33,11 @@ export class TodoService extends BaseService {
     return handleData(todoRecord, responseMessage.SUCCESS, HttpStatus.CREATED);
   }
 
-  async getTodoListing(query: CommonDtos.PaginationInput) {
+  async getTodoListing(user: User, query: CommonDtos.PaginationInput) {
     const [data, totalRecords] = await this.todosRepository.getTodoListing(
       query.page,
-      query.limit
+      query.limit,
+      user.id
     );
 
     const response = {

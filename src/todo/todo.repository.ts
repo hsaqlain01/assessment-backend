@@ -9,7 +9,8 @@ export class TodosRepository extends Repository<Todo> {
   }
   public getTodoListing(
     page: number = 1,
-    limit: number = 10
+    limit: number = 10,
+    userId: number
   ): Promise<[Todo[], number]> {
     const skip = (page - 1) * limit;
     let query = this.createQueryBuilder('todos')
@@ -24,6 +25,9 @@ export class TodosRepository extends Repository<Todo> {
       ])
       .innerJoin('todos.user', 'user')
       .orderBy('todos.id', 'DESC')
+      .where(`todos.userId = :userId`, {
+        userId,
+      })
       .skip(skip)
       .take(limit);
 

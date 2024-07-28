@@ -31,9 +31,9 @@ export class TodoController {
 
   @Get('listing')
   @UseGuards(JwtAuthGuard)
-  getTodoListing(@Query() query: CommonDtos.PaginationInput) {
+  getTodoListing(@Request() req, @Query() query: CommonDtos.PaginationInput) {
     try {
-      return this.todoService.getTodoListing(query);
+      return this.todoService.getTodoListing(req.user, query);
     } catch (error) {
       throw new Error(error);
     }
