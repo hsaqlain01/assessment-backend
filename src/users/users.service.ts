@@ -1,5 +1,5 @@
 import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
-import { LoginResponse, UserDto } from './dto/user.dto';
+import { AuthResponse, UserDto } from './dto/user.dto';
 import { UserRepository } from './users.repository';
 import { BaseService } from '../base/base.service';
 import { User } from './entities/users.entity';
@@ -21,7 +21,7 @@ export class UsersService extends BaseService {
   async commitTransaction(ts: TransactionScope) {
     await ts.commit();
   }
-  async create(createUserDto: UserDto): Promise<ApiResponse<User>> {
+  async create(createUserDto: UserDto): Promise<ApiResponse<AuthResponse>> {
     const existingUser = await this.usersRepository
       .getUserByEmailOrUsername(createUserDto.email, createUserDto.username)
       .getOne();
@@ -45,12 +45,17 @@ export class UsersService extends BaseService {
     transactionScope.add(user);
 
     await this.commitTransaction(transactionScope);
+    const { access_token } = await this.authService.getToken(user);
 
     const { password, ...userRecord } = user;
-    return handleData(userRecord, responseMessage.SUCCESS, HttpStatus.CREATED);
+    return handleData(
+      { user: userRecord, access_token },
+      responseMessage.SUCCESS,
+      HttpStatus.CREATED
+    );
   }
 
-  async login(user: User): Promise<ApiResponse<LoginResponse>> {
+  async login(user: User): Promise<ApiResponse<AuthResponse>> {
     const { access_token } = await this.authService.getToken(user);
 
     const response = { user, access_token };

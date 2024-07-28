@@ -16,7 +16,7 @@ export class UserDto extends LoginDto {
   email: string;
 }
 
-export interface LoginResponse {
+export interface AuthResponse {
   user: User;
 
   access_token: string;
