@@ -63,6 +63,15 @@ export class TodoService extends BaseService {
     return handleData(todo, responseMessage.UPDATED);
   }
 
+  async getTodoById(id: number) {
+    const todo = await this.todosRepository.geTodoById(id).getOne();
+    if (!todo) {
+      throw new BadRequestException(responseMessage.NOT_FOUND);
+    }
+
+    return handleData(todo);
+  }
+
   async deleteTodo(id: number) {
     const todo = await this.todosRepository.geTodoById(id).getOne();
     if (!todo) {

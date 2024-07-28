@@ -49,6 +49,16 @@ export class TodoController {
     }
   }
 
+  @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  getTodoById(@Param('id') id) {
+    try {
+      return this.todoService.getTodoById(+id);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   deleteTodo(@Param('id') id) {
