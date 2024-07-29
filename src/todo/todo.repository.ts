@@ -34,7 +34,7 @@ export class TodosRepository extends Repository<Todo> {
     return query.getManyAndCount();
   }
 
-  public geTodoById(id: number) {
+  public getTodoById(id: number) {
     return this.createQueryBuilder('todos').where(`todos.id = :id`, {
       id,
     });

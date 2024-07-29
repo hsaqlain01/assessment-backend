@@ -19,6 +19,7 @@ export class TodoService extends BaseService {
   async commitTransaction(ts: TransactionScope) {
     await ts.commit();
   }
+
   async create(user: User, createTodoDto: CreateTodoDto) {
     const todoRecord = new Todo({
       ...createTodoDto,
@@ -48,7 +49,7 @@ export class TodoService extends BaseService {
   }
 
   async updateTodo(id: number, updateTodoDto: UpdateTodoDto) {
-    const todo = await this.todosRepository.geTodoById(id).getOne();
+    const todo = await this.todosRepository.getTodoById(id).getOne();
 
     if (!todo) {
       throw new BadRequestException(responseMessage.NOT_FOUND);
@@ -65,7 +66,7 @@ export class TodoService extends BaseService {
   }
 
   async getTodoById(id: number) {
-    const todo = await this.todosRepository.geTodoById(id).getOne();
+    const todo = await this.todosRepository.getTodoById(id).getOne();
     if (!todo) {
       throw new BadRequestException(responseMessage.NOT_FOUND);
     }
@@ -74,7 +75,7 @@ export class TodoService extends BaseService {
   }
 
   async deleteTodo(id: number) {
-    const todo = await this.todosRepository.geTodoById(id).getOne();
+    const todo = await this.todosRepository.getTodoById(id).getOne();
     if (!todo) {
       throw new BadRequestException(responseMessage.NOT_FOUND);
     }

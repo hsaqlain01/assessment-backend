@@ -25,15 +25,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    try {
-      const responseBody = {
-        statusCode: httpStatus,
-        message: (response as any).message,
-        timestamp: new Date().toISOString(),
-      };
-      httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
-    } catch (error) {
-      console.log('error', error);
-    }
+    const responseBody = {
+      statusCode: httpStatus,
+      message: (response as any).message,
+      timestamp: new Date().toISOString(),
+    };
+    httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
   }
 }
